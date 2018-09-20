@@ -1,5 +1,5 @@
 # 天池竞赛Baseline分享
-#（[2018广东工业智造大数据创新大赛——智能算法赛](https://tianchi.aliyun.com/competition/introduction.htm?spm=5176.11165320.5678.1.54114443WSKVPP&raceId=231682)，未调参情况下线上`0.921`）
+[2018广东工业智造大数据创新大赛——智能算法赛](https://tianchi.aliyun.com/competition/introduction.htm?spm=5176.11165320.5678.1.54114443WSKVPP&raceId=231682)，未调参情况下线上`0.921`
 ---
 ## 运行代码前，需要将图片放在data目录下，目录树如下：
 
