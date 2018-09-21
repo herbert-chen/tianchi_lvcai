@@ -304,7 +304,9 @@ def main():
 
     # GPU ID
     os.environ["CUDA_VISIBLE_DEVICES"] = '0, 1'
+    # 小数据集上，batch size不易过大
     batch_size = 24
+    # 进程数量，最好不要超过电脑最大进程数，尽量能被batch size整除，如果出现ran out of input错误可以设置workers为0
     workers = 12
 
     # epoch数量，分stage进行，跑完一个stage后降低学习率进入下一个stage
@@ -331,15 +333,16 @@ def main():
     evaluate = False
     # 是否从断点继续跑
     resume = False
-    # 创建模型
+    # 创建inception_v4模型
     model = model_v4.v4(num_classes=12)
     model = torch.nn.DataParallel(model).cuda()
 
     # optionally resume from a checkpoint
     if resume:
-        if os.path.isfile(resume):
-            print("=> loading checkpoint '{}'".format(resume))
-            checkpoint = torch.load(resume)
+        checkpoint_path = './model/%s/checkpoint.pth.tar' % file_name
+        if os.path.isfile(checkpoint_path):
+            print("=> loading checkpoint '{}'".format(checkpoint_path))
+            checkpoint = torch.load(checkpoint_path)
             start_epoch = checkpoint['epoch'] + 1
             best_precision = checkpoint['best_precision']
             lowest_loss = checkpoint['lowest_loss']
@@ -365,7 +368,7 @@ def main():
     # 图片归一化，由于采用ImageNet预训练网络，因此这里直接采用ImageNet网络的参数
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     
-    # 训练集图片变换
+    # 训练集图片变换，输入网络的尺寸为384*384
     train_data = TrainDataset(train_data_list,
                               transform=transforms.Compose([
                                   transforms.Resize((400, 400)),
