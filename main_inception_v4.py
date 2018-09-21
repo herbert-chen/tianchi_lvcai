@@ -306,7 +306,7 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = '0, 1'
     # 小数据集上，batch size不易过大
     batch_size = 24
-    # 进程数量，最好不要超过电脑最大进程数，尽量能被batch size整除，如果出现ran out of input错误可以设置workers为0
+    # 进程数量，最好不要超过电脑最大进程数，尽量能被batch size整除，windows下报错可以改为workers=0
     workers = 12
 
     # epoch数量，分stage进行，跑完一个stage后降低学习率进入下一个stage
@@ -325,7 +325,8 @@ def main():
     best_precision = 0
     lowest_loss = 100
 
-    # 训练及验证时的打印频率，用于观察loss和acc的实时变化
+    # 设定打印频率，即多少step打印一次，用于观察loss和acc的实时变化
+    # 打印结果中，括号前面为实时loss和acc，括号内部为epoch内平均loss和acc
     print_freq = 1
     # 验证集比例
     val_ratio = 0.12
@@ -414,6 +415,7 @@ def main():
     if evaluate:
         validate(val_loader, model, criterion)
     else:
+        # 开始训练
         for epoch in range(start_epoch, total_epochs):
             # train for one epoch
             train(train_loader, model, criterion, optimizer, epoch)
