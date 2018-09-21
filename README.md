@@ -27,3 +27,5 @@
 本代码为baseline，未经任何调参，参数可以自行随意修改。
 
 注：只用到了guangdong_round1_train2_20180916数据，没有使用guangdong_round1_train1_20180903，可自行添加
+
+    许多同学反应Windows下报错的问题，将workers设为0即可解决
