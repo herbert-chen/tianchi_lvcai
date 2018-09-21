@@ -302,9 +302,9 @@ def main():
     
     # 程序主体
 
-    # GPU ID
+    # 设定GPU ID
     os.environ["CUDA_VISIBLE_DEVICES"] = '0, 1'
-    # 小数据集上，batch size不易过大
+    # 小数据集上，batch size不易过大，如出现out of memory，应再调小batch size
     batch_size = 24
     # 进程数量，最好不要超过电脑最大进程数，尽量能被batch size整除，windows下报错可以改为workers=0
     workers = 12
