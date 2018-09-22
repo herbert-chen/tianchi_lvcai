@@ -217,7 +217,7 @@ def main():
         model.eval()
         for i, (images, filepath) in enumerate(tqdm(test_loader)):
             # bs, ncrops, c, h, w = images.size()
-            filepath = [i.split('/')[-1] for i in filepath]
+            filepath = [os.path.split(i)[1] for i in filepath]
             image_var = torch.tensor(images, requires_grad=False)  # for pytorch 0.4
 
             with torch.no_grad():
