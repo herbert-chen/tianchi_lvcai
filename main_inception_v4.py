@@ -139,30 +139,34 @@ def main():
         model.train()
 
         end = time.time()
+        # 从训练集迭代器中获取训练数据
         for i, (images, target) in enumerate(train_loader):
-            # measure data loading
+            # 评估图片读取耗时
             data_time.update(time.time() - end)
+            # 将图片和标签转化为tensor
             image_var = torch.tensor(images).cuda(async=True)
             label = torch.tensor(target).cuda(async=True)
 
-            # compute y_pred
+            # 将图片输入网络，前传，生成预测值
             y_pred = model(image_var)
+            # 计算loss
             loss = criterion(y_pred, label)
-
-            # measure accuracy and record loss
-            prec, PRED_COUNT = accuracy(y_pred.data, target, topk=(1, 1))
             losses.update(loss.item(), images.size(0))
+
+            # 计算top1正确率
+            prec, PRED_COUNT = accuracy(y_pred.data, target, topk=(1, 1))
             acc.update(prec, PRED_COUNT)
 
-            # compute gradient and do SGD step
+            # 对梯度进行反向传播，使用随机梯度下降更新网络权重
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
-            # measure elapsed time
+            # 评估训练耗时
             batch_time.update(time.time() - end)
             end = time.time()
 
+            # 打印耗时与结果
             if i % print_freq == 0:
                 print('Epoch: [{0}][{1}/{2}]\t'
                       'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
@@ -185,7 +189,7 @@ def main():
             image_var = torch.tensor(images).cuda(async=True)
             target = torch.tensor(labels).cuda(async=True)
 
-            # compute y_pred
+            # 图片前传。验证和测试时不需要更新网络权重，所以使用torch.no_grad()，表示不计算梯度
             with torch.no_grad():
                 y_pred = model(image_var)
                 loss = criterion(y_pred, target)
@@ -222,10 +226,11 @@ def main():
 
             with torch.no_grad():
                 y_pred = model(image_var)
-
-                # get the index of the max log-probability
+                # 使用softmax函数将图片预测结果转换成类别概率
                 smax = nn.Softmax(1)
                 smax_out = smax(y_pred)
+                
+            # 保存图片名称与预测概率
             csv_map['filename'].extend(filepath)
             for output in smax_out:
                 prob = ';'.join([str(i) for i in output.data.tolist()])
@@ -244,7 +249,7 @@ def main():
             else:
                 sub_label.append('defect%d' % pred_label)
 
-        # 生成结果文件，保存在result文件夹中
+        # 生成结果文件，保存在result文件夹中，可用于直接提交
         submission = pd.DataFrame({'filename': sub_filename, 'label': sub_label})
         submission.to_csv('./result/%s/submission.csv' % file_name, header=None, index=False)
         return
@@ -304,9 +309,9 @@ def main():
 
     # 设定GPU ID
     os.environ["CUDA_VISIBLE_DEVICES"] = '0, 1'
-    # 小数据集上，batch size不易过大，如出现out of memory，应再调小batch size
+    # 小数据集上，batch size不易过大。如出现out of memory，应调小batch size
     batch_size = 24
-    # 进程数量，最好不要超过电脑最大进程数，尽量能被batch size整除，windows下报错可以改为workers=0
+    # 进程数量，最好不要超过电脑最大进程数，尽量能被batch size整除。windows下报错可以改为workers=0
     workers = 12
 
     # epoch数量，分stage进行，跑完一个stage后降低学习率进入下一个stage
@@ -457,7 +462,7 @@ def main():
         acc_file.write('%s  * best acc: %.8f  %s\n' % (
         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())), best_precision, os.path.basename(__file__)))
 
-    # 读取最佳模型，预测测试集
+    # 读取最佳模型，预测测试集，并生成可直接提交的结果文件
     best_model = torch.load('./model/%s/model_best.pth.tar' % file_name)
     model.load_state_dict(best_model['state_dict'])
     test(test_loader=test_loader, model=model)
