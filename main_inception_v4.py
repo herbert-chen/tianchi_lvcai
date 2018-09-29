@@ -311,7 +311,7 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = '0, 1'
     # 小数据集上，batch size不易过大。如出现out of memory，应调小batch size
     batch_size = 24
-    # 进程数量，最好不要超过电脑最大进程数，尽量能被batch size整除。windows下报错可以改为workers=0
+    # 进程数量，最好不要超过电脑最大进程数。windows下报错可以改为workers=0
     workers = 12
 
     # epoch数量，分stage进行，跑完一个stage后降低学习率进入下一个stage
