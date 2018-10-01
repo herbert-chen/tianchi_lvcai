@@ -362,7 +362,7 @@ def main():
                 model.load_state_dict(torch.load('./model/%s/model_best.pth.tar' % file_name)['state_dict'])
             print("=> loaded checkpoint (epoch {})".format(checkpoint['epoch']))
         else:
-            print("=> no checkpoint found at '{}'".format(resume))
+            print("=> no checkpoint found at '{}'".format(checkpoint_path))
 
     # 读取训练图片列表
     all_data = pd.read_csv('data/label.csv')
