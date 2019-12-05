@@ -33,3 +33,6 @@
 注：只用到了guangdong_round1_train2_20180916数据，没有使用guangdong_round1_train1_20180903，可自行添加。
 
     许多同学反应Windows下训练时train_loader报错的问题，将workers设为0即可解决。
+
+## 复赛方案
+https://tianchi.aliyun.com/forum/postDetail?spm=5176.12586969.1002.9.743c2881MOwYf2&postId=38469
